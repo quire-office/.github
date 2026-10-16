@@ -8,21 +8,24 @@
 
 Office documents are the world's most portable data format — and the least respected.
 Round-trip a real-world `.docx` through most open tools and you silently lose the parts
-they don't understand. We build engines where that is structurally impossible: what we
-don't touch, we write back byte-for-byte.
+they don't understand. We build engines where that is structurally impossible: parts the
+engine doesn't modify are re-emitted untouched, verified byte-for-byte by a CI gate on
+every push. When the engine *does* edit a document, the guarantee shifts to structural
+losslessness — every part still parses, nothing silently disappears.
 
 ## Products
 
 | Project | Format | Status | What it is |
 |---|---|---|---|
-| **[quire](https://github.com/quire-office/quire)** | DOCX | preview | Rust typesetting engine: lossless OPC round-trip (130/130 corpus files byte-identical in CI), Knuth-Plass line breaking, incremental pagination, native + wasm from one core |
+| **quire** | DOCX | private preview | Rust typesetting engine: lossless OPC round-trip (130/130 corpus files byte-identical in CI), Knuth-Plass line breaking, incremental pagination, native + wasm from one core |
 
-XLSX and PPTX join the family as sibling format crates on the same core — same OPC
-container, same lossless guarantee, same layout machinery.
+XLSX and PPTX join the family as sibling format crates sharing what Office formats
+actually have in common: the OPC container, OOXML part handling, and the same lossless
+discipline — each with the layout model its format demands (flow, grid, or canvas).
 
 ## What we optimize for
 
-- **Lossless by construction** — untouched parts are copied byte-for-byte, verified by a CI gate on every push, not by hope.
+- **Lossless by construction** — untouched parts are re-emitted byte-for-byte (CI-gated); edited parts stay structurally complete. Two distinct guarantees, honestly labeled.
 - **One core, two shells** — the engine is one Rust codebase compiled for native and `wasm32-unknown-unknown`; shells are thin platform adapters, and the boundary is machine-enforced.
 - **Cross-platform is the baseline** — the same gates run on Linux, macOS and Windows: formatting, clippy, tests, wasm link, bundle-size ceiling, round-trip.
 
@@ -35,7 +38,8 @@ private while the foundation firms up — it opens when the foundations are soli
 
 ## About this org
 
-Everything here is built to one standard: **a document that goes in must come out
-the same document** — and a browser tab must render what a desktop renders.
+Everything here is built to one standard: **a document that goes in must come out the
+same document** — and line breaking that runs in a browser tab must be the same
+computation that runs on desktop: one engine, one answer, per target platform.
 
 <!-- website placeholder: add links to quireoffice.dev + docs here once the domain is live -->
