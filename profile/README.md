@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/banner.png" alt="Quire — lossless DOCX typescraft" width="860"/>
+  <img src="https://raw.githubusercontent.com/quire-office/.github/main/profile/media/banner.png" alt="Quire — lossless DOCX typescraft" width="860"/>
 </p>
 
 # Quire Office
